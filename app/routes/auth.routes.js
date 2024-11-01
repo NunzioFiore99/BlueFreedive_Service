@@ -21,6 +21,8 @@ module.exports = function(app) {
 
     app.post("/api/auth/login", controller.login);
 
+    app.post("/api/auth/refreshtoken", controller.refreshToken);
+
     app.get("/logout", (req, res) => {
         res. clearCookie ( "token" );
         res. json ({ message : "Disconnected" });

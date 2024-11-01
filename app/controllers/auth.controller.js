@@ -1,14 +1,11 @@
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcryptjs");
 const db = require("../models");
-const User = db.user;
-const Role = db.role;
+const { user: User, role: Role, refreshToken: RefreshToken } = db;
 
 const generateToken = (userId) => {
     return jwt.sign({ id: userId }, process.env.JWT_SECRET, {
-        algorithm: 'HS256',
-        allowInsecureKeySizes: true,
-        expiresIn: 86400 // 24 hours
+        expiresIn: process.env.JWT_EXPIRATION,
     });
 };
 
@@ -58,7 +55,8 @@ exports.login = async (req, res) => {
             return res.status(401).send({ accessToken: null, message: "Invalid Password!" });
         }
 
-        const token = generateToken(user.id);
+        const accessToken = generateToken(user.id);
+        const refreshToken = await RefreshToken.createToken(user);
         const authorities = user.roles.map(role => "ROLE_" + role.name.toUpperCase());
 
         res.status(200).send({
@@ -66,9 +64,35 @@ exports.login = async (req, res) => {
             username: user.username,
             email: user.email,
             roles: authorities,
-            accessToken: token
+            accessToken: accessToken,
+            refreshToken: refreshToken
         });
     } catch (err) {
         res.status(500).send({ message: err.message });
+    }
+};
+
+// Refresh Token
+exports.refreshToken = async (req, res) => {
+    const { refreshToken: requestToken } = req.body;
+    if (!requestToken) {
+        return res.status(403).json({ message: "Refresh Token is required!" });
+    }
+    try {
+        const refreshToken = await RefreshToken.findOne({ token: requestToken });
+        if (!refreshToken) {
+            return res.status(403).json({ message: "Refresh token is not in database!" });
+        }
+        if (RefreshToken.verifyExpiration(refreshToken)) {
+            await RefreshToken.findByIdAndDelete(refreshToken._id);
+            return res.status(403).json({ message: "Refresh token was expired. Please make a new login request." });
+        }
+        const newAccessToken = generateToken(refreshToken.user._id);
+        return res.status(200).json({
+            accessToken: newAccessToken,
+            refreshToken: refreshToken.token,
+        });
+    } catch (err) {
+        return res.status(500).send({ message: err.message });
     }
 };

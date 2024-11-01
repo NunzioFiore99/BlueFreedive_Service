@@ -1,19 +1,27 @@
 const jwt = require("jsonwebtoken");
 const db = require("../models");
 const User = db.user;
+const { TokenExpiredError } = jwt;
+
+const handleError = (err, res) => {
+    if (err instanceof TokenExpiredError) {
+        return res.status(401).json({ message: "Unauthorized! Access Token has expired!" });
+    }
+    return res.status(401).json({ message: "Unauthorized!" });
+}
 
 const verifyToken = (req, res, next) => {
     const token = req.headers["x-access-token"];
 
     if (!token) {
-        return res.status(403).send({ message: "No token provided!" });
+        return res.status(403).json({ message: "No token provided!" });
     }
 
     jwt.verify(token, process.env.JWT_SECRET, (err, decoded) => {
         if (err) {
-            return res.status(401).send({ message: "Unauthorized!" });
+            return handleError(err, res);
         }
-        req.userId = decoded.id;
+        req.userId = decoded.id; // Store userId for later use
         next();
     });
 };
@@ -21,23 +29,26 @@ const verifyToken = (req, res, next) => {
 const checkRole = (roleName) => async (req, res, next) => {
     try {
         const user = await User.findById(req.userId).populate("roles", "-__v").exec();
+
         if (!user) {
-            return res.status(404).send({ message: "User not found" });
+            return res.status(404).json({ message: "User not found." });
         }
 
         const hasRole = user.roles.some(role => role.name === roleName);
         if (hasRole) {
-            next();
-        } else {
-            res.status(403).send({ message: `Require ${roleName} Role!` });
+            return next();
         }
+
+        return res.status(403).json({ message: `Require ${roleName} Role!` });
     } catch (err) {
-        res.status(500).send({ message: err.message });
+        return res.status(500).json({ message: err.message });
     }
 };
 
+// Exporting middleware functions
 const authJwt = {
     verifyToken,
-    isAdmin: checkRole("admin")
+    isAdmin: checkRole("admin"),
 };
+
 module.exports = authJwt;
