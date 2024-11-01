@@ -1,0 +1,26 @@
+{
+  "name": "bluefreedive_service",
+  "version": "1.0.0",
+  "description": "Service (backend) per il progetto BlueFreedive",
+  "main": "server.js",
+  "scripts": {
+    "start-server": "node server.js"
+  },
+  "keywords": [
+    "node.js",
+    "express",
+    "jwt",
+    "authentication",
+    "mongodb"
+  ],
+  "author": "Fiore Nunzio",
+  "license": "ISC",
+  "dependencies": {
+    "bcryptjs": "^2.4.3",
+    "cors": "^2.8.5",
+    "dotenv": "^16.4.5",
+    "express": "^4.21.1",
+    "jsonwebtoken": "^9.0.2",
+    "mongoose": "^8.8.0"
+  }
+}
