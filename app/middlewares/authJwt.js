@@ -1,6 +1,4 @@
 const jwt = require("jsonwebtoken");
-const db = require("../models");
-const User = db.user;
 const { TokenExpiredError } = jwt;
 
 const handleError = (err, res) => {
@@ -23,20 +21,22 @@ const verifyToken = (req, res, next) => {
         if (err) {
             return handleError(err, res);
         }
-        req.userId = decoded.id;
+
+        if (decoded.roles) {
+            req.userRoles = decoded.roles;
+        }
+
         next();
     });
 };
 
 const checkRole = (roleName) => async (req, res, next) => {
     try {
-        const user = await User.findById(req.userId).populate("roles", "-__v").exec();
-
-        if (!user) {
-            return res.status(404).json({ message: "User not found." });
+        if (!req.userRoles) {
+            return res.status(403).json({ message: `Require ${roleName} Role!` });
         }
 
-        const hasRole = user.roles.some(role => role.name === roleName);
+        const hasRole = req.userRoles.includes("ROLE_" + roleName.toUpperCase());
         if (hasRole) {
             return next();
         }

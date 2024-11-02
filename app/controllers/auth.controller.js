@@ -3,8 +3,13 @@ const bcrypt = require("bcryptjs");
 const db = require("../models");
 const { user: User, role: Role, refreshToken: RefreshToken } = db;
 
-const generateToken = (userId) => {
-    return jwt.sign({ id: userId }, process.env.JWT_SECRET, {
+const generateToken = (user) => {
+    return jwt.sign({
+        id: user._id,
+        username: user.username,
+        email: user.email,
+        roles: user.roles.map(role => "ROLE_" + role.name.toUpperCase())
+    }, process.env.JWT_SECRET, {
         expiresIn: process.env.JWT_EXPIRATION,
     });
 };
@@ -55,15 +60,10 @@ exports.login = async (req, res) => {
             return res.status(401).send({ accessToken: null, message: "Invalid Password!" });
         }
 
-        const accessToken = generateToken(user.id);
+        const accessToken = generateToken(user);
         const refreshToken = await RefreshToken.createToken(user);
-        const authorities = user.roles.map(role => "ROLE_" + role.name.toUpperCase());
 
         res.status(200).send({
-            id: user._id,
-            username: user.username,
-            email: user.email,
-            roles: authorities,
             accessToken: accessToken,
             refreshToken: refreshToken
         });
