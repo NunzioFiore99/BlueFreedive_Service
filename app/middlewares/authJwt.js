@@ -11,17 +11,19 @@ const handleError = (err, res) => {
 }
 
 const verifyToken = (req, res, next) => {
-    const token = req.headers["x-access-token"];
+    const authHeader = req.headers.authorization;
 
-    if (!token) {
+    if (!authHeader || !authHeader.startsWith("Bearer ")) {
         return res.status(403).json({ message: "No token provided!" });
     }
+
+    const token = authHeader.split(" ")[1];
 
     jwt.verify(token, process.env.JWT_SECRET, (err, decoded) => {
         if (err) {
             return handleError(err, res);
         }
-        req.userId = decoded.id; // Store userId for later use
+        req.userId = decoded.id;
         next();
     });
 };
