@@ -63,34 +63,47 @@ exports.login = async (req, res) => {
         const accessToken = generateToken(user);
         const refreshToken = await RefreshToken.createToken(user);
 
+        res.cookie('refreshToken', refreshToken, {
+            httpOnly: true, // Non accessibile tramite JavaScript (attacchi XSS)
+            secure: false, // Non uso HTTPS ma HTTP
+            sameSite: 'Strict', // Impedisce l'invio del cookie in contesti cross-site (CSRF Token)
+            maxAge: process.env.JWT_REFRESH_EXPIRATION * 1000 //Tempo di scadenza pari a quello di validità del refresh token
+        });
+
         res.status(200).send({
-            accessToken: accessToken,
-            refreshToken: refreshToken
+            accessToken: accessToken
         });
     } catch (err) {
         res.status(500).send({ message: err.message });
     }
 };
 
-// Refresh Token
-exports.refreshToken = async (req, res) => {
-    const { refreshToken: requestToken } = req.body;
-    if (!requestToken) {
-        return res.status(403).json({ message: "Refresh Token is required!" });
+// Get new access_token and check refresh_token
+exports.newAccessToken = async (req, res) => {
+    const refreshTokenCookie = req.cookies.refreshToken;
+    if (!refreshTokenCookie) {
+        return res.status(401).json({ message: "Refresh Token is required. Please make a new login request." });
     }
+
     try {
-        const refreshToken = await RefreshToken.findOne({ token: requestToken });
-        if (!refreshToken) {
-            return res.status(403).json({ message: "Refresh token is not in database!" });
+        const refreshTokenInDb = await RefreshToken.findOne({ token: refreshTokenCookie }).populate({
+            path: 'user',
+            populate: {
+                path: 'roles',
+                select: '-__v'
+            }
+        }).exec();
+        if (!refreshTokenInDb) {
+            return res.status(401).json({ message: "Refresh token is not in database!" });
         }
-        if (RefreshToken.verifyExpiration(refreshToken)) {
-            await RefreshToken.findByIdAndDelete(refreshToken._id);
-            return res.status(403).json({ message: "Refresh token was expired. Please make a new login request." });
+        if (RefreshToken.verifyExpiration(refreshTokenInDb)) {
+            await RefreshToken.findByIdAndDelete(refreshTokenInDb._id);
+            return res.status(401).json({ message: "Refresh token was expired. Please make a new login request." });
         }
-        const newAccessToken = generateToken(refreshToken.user._id);
+
+        const newAccessToken = generateToken(refreshTokenInDb.user);
         return res.status(200).json({
-            accessToken: newAccessToken,
-            refreshToken: refreshToken.token,
+            accessToken: newAccessToken
         });
     } catch (err) {
         return res.status(500).send({ message: err.message });

@@ -8,7 +8,7 @@ const handleError = (err, res) => {
     return res.status(401).json({ message: "Unauthorized!" });
 }
 
-const verifyToken = (req, res, next) => {
+const verifyAccessToken = (req, res, next) => {
     const authHeader = req.headers.authorization;
 
     if (!authHeader || !authHeader.startsWith("Bearer ")) {
@@ -47,9 +47,9 @@ const checkRole = (roleName) => async (req, res, next) => {
     }
 };
 
-// Exporting middleware functions
+// Exporting auth middleware functions
 const authJwt = {
-    verifyToken,
+    verifyAccessToken: verifyAccessToken,
     isAdmin: checkRole("admin"),
 };
 

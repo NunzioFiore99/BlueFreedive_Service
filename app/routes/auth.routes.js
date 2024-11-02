@@ -1,5 +1,5 @@
 const { verifySignUp } = require("../middlewares");
-const controller = require("../controllers/auth.controller");
+const authController = require("../controllers/auth.controller");
 
 module.exports = function(app) {
     app.use(function(req, res, next) {
@@ -16,12 +16,12 @@ module.exports = function(app) {
             verifySignUp.checkDuplicateUsernameOrEmail,
             verifySignUp.checkRolesExisted
         ],
-        controller.signup
+        authController.signup
     );
 
-    app.post("/api/auth/login", controller.login);
+    app.post("/api/auth/login", authController.login);
 
-    app.post("/api/auth/refreshtoken", controller.refreshToken);
+    app.get("/api/auth/accesstoken", authController.newAccessToken());
 
     app.get("/logout", (req, res) => {
         res. clearCookie ( "token" );
