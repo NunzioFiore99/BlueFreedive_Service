@@ -10,11 +10,23 @@ const corsOptions = {
     credentials: true //Permette di inviare cookie
 };
 app.use(cors(corsOptions));
+// Headers
+app.use(function(req, res, next) {
+    res.header(
+        "Access-Control-Allow-Headers",
+        "Authorization, Origin, Content-Type, Accept"
+    );
+    res.header(
+        "Access-Control-Allow-Methods",
+        "GET, POST, PUT, PATCH, DELETE, OPTIONS"
+    );
+    next();
+});
 
 // Middlewares
 app.use(cookieParser());
 app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
+//app.use(express.urlencoded({ extended: true })); To Be Delete
 
 // Database connection
 const db = require("./app/models");
