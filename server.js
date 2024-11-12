@@ -1,6 +1,8 @@
 const express = require("express");
 const cors = require("cors");
 const cookieParser = require('cookie-parser');
+const db = require("./app/models");
+const { role: Role } = db;
 const app = express();
 require("dotenv").config();
 
@@ -28,31 +30,23 @@ app.use(cookieParser());
 app.use(express.json());
 //app.use(express.urlencoded({ extended: true })); To Be Delete
 
-// Database connection
-const db = require("./app/models");
-const Role = db.role;
-
 async function connectToDatabase() {
     try {
         await db.mongoose.connect(process.env.MONGODB_URL);
         console.log("Successfully connected to MongoDB.");
-        await initializeRoles();
     } catch (err) {
         console.error("Connection error", err);
         process.exit(1);
     }
 }
 
-// Roles setup if database is empty
 async function initializeRoles() {
     try {
         const count = await Role.estimatedDocumentCount();
         if (count === 0) {
-            await new Role({ name: "admin" }).save();
-            console.log("Added 'admin' to roles collection");
-
-            await new Role({ name: "user" }).save();
-            console.log("Added 'user' to roles collection");
+            await new Role({ name: "ADMIN" }).save();
+            await new Role({ name: "USER" }).save();
+            console.log("Successfully inserted roles.");
         }
     } catch (err) {
         console.log("Error during role initialization:", err);
@@ -60,7 +54,9 @@ async function initializeRoles() {
 }
 
 // Connect to database
-connectToDatabase();
+connectToDatabase().then(async () => {
+    await initializeRoles();
+});
 
 // Simple routes
 app.get("/", (req, res) => {
@@ -70,6 +66,7 @@ app.get("/", (req, res) => {
 // Routes
 require('./app/routes/auth.routes')(app);
 require('./app/routes/user.routes')(app);
+require('./app/routes/userProfile.routes')(app);
 
 // Set port, listen for requests
 const SERVICE_PORT = process.env.SERVICE_PORT || 8080;

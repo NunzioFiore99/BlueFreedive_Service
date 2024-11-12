@@ -50,7 +50,7 @@ const checkRole = (roleName) => async (req, res, next) => {
 // Exporting auth middleware functions
 const authJwt = {
     verifyAccessToken: verifyAccessToken,
-    isAdmin: checkRole("admin"),
+    isAdmin: checkRole("ADMIN"),
 };
 
 module.exports = authJwt;

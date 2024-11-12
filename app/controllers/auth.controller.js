@@ -2,6 +2,7 @@ const jwt = require("jsonwebtoken");
 const bcrypt = require("bcryptjs");
 const db = require("../models");
 const { user: User, role: Role, refreshToken: RefreshToken } = db;
+const userResponseDto = require("../contracts/user.response.dto");
 
 const generateToken = (user) => {
     return jwt.sign({
@@ -28,17 +29,17 @@ const getRoles = async (rolesArray) => {
 // Signup
 exports.signup = async (req, res) => {
     try {
-        const hashedPassword = bcrypt.hashSync(req.body.password, 8);
         const user = new User({
             username: req.body.username,
             email: req.body.email,
-            password: hashedPassword
+            password: bcrypt.hashSync(req.body.password, 8) //Hashed Password
         });
 
         user.roles = await getRoles(req.body.roles);
         await user.save();
+        const newUser = await User.findById(user._id).populate("roles");
 
-        res.send({ message: "You have registered successfully!" });
+        res.status(201).send({ message: "You have registered successfully!", user: userResponseDto(newUser) });
     } catch (err) {
         res.status(500).send({ message: err.message });
     }
