@@ -9,6 +9,7 @@ db.user = require("./user.model");
 db.role = require("./role.model");
 db.userProfile = require("./userProfile.model");
 db.refreshToken = require("./refreshToken.model");
+db.diveSession = require("./diveSession.model");
 
 db.ROLES = ["ADMIN", "USER"];
 
