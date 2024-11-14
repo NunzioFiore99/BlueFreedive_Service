@@ -1,17 +1,18 @@
-const { verifySignUp } = require("../middlewares");
+const { verifySignUp, verifyLogin} = require("../middlewares");
 const authController = require("../controllers/auth.controller");
 
 module.exports = function(app) {
     app.post(
         "/api/auth/signup",
         [
+            verifySignUp.checkIfPresentAllSignUpDate,
             verifySignUp.checkDuplicateUsernameOrEmail,
             verifySignUp.checkRolesExisted
         ],
         authController.signup
     );
 
-    app.post("/api/auth/login", authController.login);
+    app.post("/api/auth/login", [verifyLogin.checkIfPresentAllLoginDate()], authController.login);
 
     app.get("/api/auth/accessToken", authController.newAccessToken);
 

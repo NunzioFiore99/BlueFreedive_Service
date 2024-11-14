@@ -24,7 +24,7 @@ exports.createMyDiveSession = async (req, res) => {
             notes: diveSession.notes
         });
         await diveSessionToSave.save();
-        res.status(201).json(diveSessionResponseDto(diveSession));
+        res.status(201).json(diveSessionResponseDto(diveSessionToSave));
     } catch (error) {
         if (error.status && error.message) {
             return res.status(error.status).json({ message: error.message });
@@ -37,7 +37,7 @@ exports.retrieveMyDiveSessions = async (req, res) => {
     try {
         const decodedAccessToken = await getDecodedAccessToken(req);
         const userId = decodedAccessToken.id;
-        const diveSessions = await DiveSession.findOne({user: userId});
+        const diveSessions = await DiveSession.find({user: userId});
         return res.status(200).json(diveSessionsResponseDto(diveSessions));
     } catch(error) {
         if (error.status && error.message) {
@@ -56,6 +56,7 @@ exports.retrieveMyDiveSession = async (req, res) => {
             _id: req.params.id,
             user: userId
         });
+        if(!diveSession) return res.status(404).json({message: "No dive session found."});
         res.status(200).json(diveSessionResponseDto(diveSession));
     } catch(error) {
         if (error.status && error.message) {
@@ -71,7 +72,7 @@ exports.updateMyDiveSession = async (req, res) => {
         if (!diveSession || !req.params.id) return res.status(404).json({message: "Body or id is empty."});
         const decodedAccessToken = await getDecodedAccessToken(req);
         const userId = decodedAccessToken.id;
-        const diveSessionToUpdate = new DiveSession({
+        const diveSessionToUpdate = {
             user: userId,
             date: diveSession.date,
             location: diveSession.location,
@@ -82,10 +83,10 @@ exports.updateMyDiveSession = async (req, res) => {
             maxDepth: diveSession.maxDepth,
             maxDiveTime: diveSession.maxDiveTime,
             notes: diveSession.notes
-        });
+        };
         const updatedDiveSession = await DiveSession.findByIdAndUpdate(req.params.id, diveSessionToUpdate, { new: true, runValidators: true });
         if (!updatedDiveSession) return res.status(404).json({ message: "Dive session not found." });
-        res.status(201).json(diveSessionResponseDto(diveSession));
+        res.status(201).json(diveSessionResponseDto(updatedDiveSession));
     } catch(error) {
         if (error.status && error.message) {
             return res.status(error.status).json({ message: error.message });
@@ -104,7 +105,7 @@ exports.deleteMyDiveSession = async (req, res) => {
             user: userId
         });
         if (!deletedDiveSession) return res.status(404).json({message: "Dive session not found."});
-        res.status(204);
+        res.status(204).send();
     } catch (error) {
         if (error.status && error.message) {
             return res.status(error.status).json({ message: error.message });
@@ -126,7 +127,8 @@ exports.retrieveDiveSessions = async (req, res) => {
 exports.retrieveDiveSession = async (req, res) => {
     try {
         if(!req.params.id) return res.status(404).json({message: "No dive session inserted."});
-        const diveSession = await DiveSession.findById(req.params.id);
+        const diveSession = await DiveSession.findOne({ _id: req.params.id });
+        if(!diveSession) return res.status(404).json({message: "Dive session not found."});
         res.status(200).json(diveSessionResponseDto(diveSession));
     } catch(error) {
         res.status(500).json({ message: error.message });
@@ -138,7 +140,7 @@ exports.deleteDiveSession = async (req, res) => {
         if (!req.params.id) return res.status(404).json({message: "Id not present."});
         const deletedDiveSession = await DiveSession.findByIdAndDelete(req.params.id);
         if (!deletedDiveSession) return res.status(404).json({message: "Dive session not found."});
-        res.status(204);
+        res.status(204).send();
     } catch (error) {
         res.status(500).json({ message: error.message });
     }

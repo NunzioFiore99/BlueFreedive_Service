@@ -1,9 +1,8 @@
-const DiveSession = require("../models/diveSession.model");
-
 function diveSessionsResponseDto(diveSessions) {
     const diveSessionsResponse = [];
     diveSessions.forEach(diveSession => {
-        diveSessionsResponse.push(new DiveSession({
+        diveSessionsResponse.push({
+            id: diveSession._id,
             user: diveSession.user,
             date: diveSession.date,
             location: diveSession.location,
@@ -14,7 +13,7 @@ function diveSessionsResponseDto(diveSessions) {
             maxDepth: diveSession.maxDepth,
             maxDiveTime: diveSession.maxDiveTime,
             notes: diveSession.notes
-        }));
+        });
     })
 
     return diveSessionsResponse;

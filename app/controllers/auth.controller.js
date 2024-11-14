@@ -37,7 +37,7 @@ exports.signup = async (req, res) => {
 
         user.roles = await getRoles(req.body.roles);
         await user.save();
-        const newUser = await User.findById(user._id).populate("roles");
+        const newUser = await User.findOne({ _id: user._id }).populate("roles");
 
         res.status(201).send({ message: "You have registered successfully!", user: userResponseDto(newUser) });
     } catch (err) {
@@ -65,10 +65,10 @@ exports.login = async (req, res) => {
         const refreshToken = await RefreshToken.createToken(user);
 
         res.cookie('refreshToken', refreshToken, {
-            httpOnly: true, // Non accessibile tramite JavaScript (attacchi XSS)
-            secure: false, // Non uso HTTPS ma HTTP
-            sameSite: 'Strict', // Impedisce l'invio del cookie in contesti cross-site (CSRF Token)
-            maxAge: process.env.JWT_REFRESH_EXPIRATION * 1000 //Tempo di scadenza pari a quello di validità del refresh token
+            httpOnly: true, // Not accessible via javascript (XSS attacks)
+            secure: false, // I don't use HTTPS but I use HTTP
+            sameSite: 'Strict', // Prevents sending the cookie in cross-site contexts (CSRF Token)
+            maxAge: process.env.JWT_REFRESH_EXPIRATION * 1000 // Expiry time equal to the validity of the refresh token
         });
 
         res.status(200).send({

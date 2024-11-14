@@ -18,7 +18,7 @@ exports.retrieveSelf = async (req, res) => {
     try {
         const decodedAccessToken = await getDecodedAccessToken(req);
         const userId = decodedAccessToken.id;
-        const user = await User.findById(userId).populate("roles", "-__v");
+        const user = await User.findOne({ _id: userId }).populate("roles", "-__v");
         if (!user) return res.status(404).json({ message: "User not found." });
         res.status(200).json(userResponseDto(user));
     } catch (error) {
@@ -36,9 +36,9 @@ exports.updateSelf = async (req, res) => {
         if (req.body.email) updates.email = req.body.email;
         if (req.body.password) updates.password = bcrypt.hashSync(req.body.password, 8);
         const userId = decodedAccessToken.id;
-        const updatedUser = await User.findByIdAndUpdate(userId, updates, { new: true, runValidators: true });
+        const updatedUser = await User.findOneAndUpdate({ _id: userId }, updates, { new: true, runValidators: true });
         if (!updatedUser) return res.status(404).json({ message: "User not found." });
-        res.status(204);
+        res.status(204).send();
     } catch (error) {
         if (error.status && error.message) {
             return res.status(error.status).json({ message: error.message });
@@ -63,7 +63,8 @@ exports.createUsers = async (req, res) => {
             user.roles = await getRoles(userData.roles);
 
             await user.save();
-            const newUser = await User.findById(user._id).populate("roles");
+            const newUser = await User.findOne({ _id: user._id }).populate("roles");
+            if(!newUser) return res.status(404).json({ message: "User not found." });
             savedUsers.push(userResponseDto(newUser));
         }
 
@@ -90,7 +91,7 @@ exports.retrieveUsers = async (req, res) => {
 
 exports.retrieveUser = async (req, res) => {
     try {
-        const user = await User.findById(req.params.id).populate("roles", "-__v").exec();
+        const user = await User.findOne({ _id: req.params.id }).populate("roles", "-__v").exec();
         if (!user) return res.status(404).json({ message: "User not found." });
         res.status(200).json(userResponseDto(user));
     } catch (error) {
@@ -106,7 +107,7 @@ exports.updateUser = async (req, res) => {
         if (req.body.password) updates.password = bcrypt.hashSync(req.body.password, 8);
         if (req.body.roles) updates.roles = await getRoles(req.body.roles);
 
-        const updatedUser = await User.findByIdAndUpdate(req.params.id, updates, { new: true, runValidators: true }).populate("roles", "-__v").exec();
+        const updatedUser = await User.findOneAndUpdate({ _id: req.params.id }, updates, { new: true, runValidators: true }).populate("roles", "-__v").exec();
         if (!updatedUser) return res.status(404).json({ message: "User not found." });
 
         res.status(201).json(userResponseDto(updatedUser));
@@ -117,9 +118,9 @@ exports.updateUser = async (req, res) => {
 
 exports.deleteUser = async (req, res) => {
     try {
-        const deletedUser = await User.findByIdAndDelete(req.params.id);
+        const deletedUser = await User.findOneAndDelete({ _id: req.params.id });
         if (!deletedUser) return res.status(404).json({ message: "User not found." });
-        res.status(204);
+        res.status(204).send();
     } catch (error) {
         res.status(500).json({ message: error.message });
     }

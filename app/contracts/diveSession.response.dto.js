@@ -1,5 +1,6 @@
 function diveSessionResponseDto(diveSession) {
     return {
+        id: diveSession._id,
         user: diveSession.user,
         date: diveSession.date,
         location: diveSession.location,

@@ -4,8 +4,7 @@ const diveSessionSchema = new mongoose.Schema({
     user: {
         type: mongoose.Schema.Types.ObjectId,
         ref: "users",
-        required: true,
-        unique: true
+        required: true
     },
     date: {
         type: Date,

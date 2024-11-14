@@ -1,4 +1,4 @@
-const { authJwt } = require("../middlewares");
+const { authJwt, validateRequestParam } = require("../middlewares");
 const userController = require("../controllers/user.controller");
 
 module.exports = function(app) {
@@ -9,7 +9,7 @@ module.exports = function(app) {
     //Admin
     app.post("/api/users", [authJwt.verifyAccessToken, authJwt.isAdmin], userController.createUsers);
     app.get("/api/users", [authJwt.verifyAccessToken, authJwt.isAdmin], userController.retrieveUsers)
-    app.get("/api/users/:id", [authJwt.verifyAccessToken, authJwt.isAdmin], userController.retrieveUser)
-    app.put("/api/users/:id", [authJwt.verifyAccessToken, authJwt.isAdmin], userController.updateUser);
-    app.delete("/api/users/:id", [authJwt.verifyAccessToken, authJwt.isAdmin], userController.deleteUser);
+    app.get("/api/users/:id", [authJwt.verifyAccessToken, authJwt.isAdmin, validateRequestParam], userController.retrieveUser)
+    app.put("/api/users/:id", [authJwt.verifyAccessToken, authJwt.isAdmin, validateRequestParam], userController.updateUser);
+    app.delete("/api/users/:id", [authJwt.verifyAccessToken, authJwt.isAdmin, validateRequestParam], userController.deleteUser);
 };
