@@ -8,7 +8,7 @@ const diveSessionsResponseDto = require("../contracts/diveSessions.response.dto"
 exports.createMyDiveSession = async (req, res) => {
     try {
         const diveSession = req.body;
-        if (!diveSession) return res.status(404).json({message: "Body is empty."});
+        if (!diveSession) return res.status(400).json({message: "Body is empty."});
         const decodedAccessToken = await getDecodedAccessToken(req);
         const userId = decodedAccessToken.id;
         const diveSessionToSave = new DiveSession({
@@ -49,7 +49,7 @@ exports.retrieveMyDiveSessions = async (req, res) => {
 
 exports.retrieveMyDiveSession = async (req, res) => {
     try {
-        if(!req.params.id) return res.status(404).json({message: "No dive session inserted."});
+        if(!req.params.id) return res.status(400).json({message: "No dive session inserted."});
         const decodedAccessToken = await getDecodedAccessToken(req);
         const userId = decodedAccessToken.id;
         const diveSession = await DiveSession.findOne({
@@ -69,7 +69,7 @@ exports.retrieveMyDiveSession = async (req, res) => {
 exports.updateMyDiveSession = async (req, res) => {
     try {
         const diveSession = req.body;
-        if (!diveSession || !req.params.id) return res.status(404).json({message: "Body or id is empty."});
+        if (!diveSession || !req.params.id) return res.status(400).json({message: "Body or id is empty."});
         const decodedAccessToken = await getDecodedAccessToken(req);
         const userId = decodedAccessToken.id;
         const diveSessionToUpdate = {
@@ -97,7 +97,7 @@ exports.updateMyDiveSession = async (req, res) => {
 
 exports.deleteMyDiveSession = async (req, res) => {
     try {
-        if (!req.params.id) return res.status(404).json({message: "Id not present."});
+        if (!req.params.id) return res.status(400).json({message: "Id not present."});
         const decodedAccessToken = await getDecodedAccessToken(req);
         const userId = decodedAccessToken.id;
         const deletedDiveSession = await DiveSession.findOneAndDelete({
@@ -126,7 +126,7 @@ exports.retrieveDiveSessions = async (req, res) => {
 
 exports.retrieveDiveSession = async (req, res) => {
     try {
-        if(!req.params.id) return res.status(404).json({message: "No dive session inserted."});
+        if(!req.params.id) return res.status(400).json({message: "No dive session inserted."});
         const diveSession = await DiveSession.findOne({ _id: req.params.id });
         if(!diveSession) return res.status(404).json({message: "Dive session not found."});
         res.status(200).json(diveSessionResponseDto(diveSession));
@@ -137,7 +137,7 @@ exports.retrieveDiveSession = async (req, res) => {
 
 exports.deleteDiveSession = async (req, res) => {
     try {
-        if (!req.params.id) return res.status(404).json({message: "Id not present."});
+        if (!req.params.id) return res.status(400).json({message: "Id not present."});
         const deletedDiveSession = await DiveSession.findByIdAndDelete(req.params.id);
         if (!deletedDiveSession) return res.status(404).json({message: "Dive session not found."});
         res.status(204).send();

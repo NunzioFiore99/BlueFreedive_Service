@@ -1,10 +1,18 @@
 const express = require("express");
 const cors = require("cors");
 const cookieParser = require('cookie-parser');
+const swaggerUi = require('swagger-ui-express');
+const swaggerJSDoc = require('swagger-jsdoc');
 const db = require("./app/models");
 const { role: Role } = db;
+
 const app = express();
 require("dotenv").config();
+
+// Middlewares
+app.use(cookieParser());
+app.use(express.json());
+//app.use(express.urlencoded({ extended: true })); To Be Delete
 
 // CORS settings
 const corsOptions = {
@@ -12,6 +20,7 @@ const corsOptions = {
     credentials: true //Permette di inviare cookie
 };
 app.use(cors(corsOptions));
+
 // Headers
 app.use(function(req, res, next) {
     res.header(
@@ -25,11 +34,7 @@ app.use(function(req, res, next) {
     next();
 });
 
-// Middlewares
-app.use(cookieParser());
-app.use(express.json());
-//app.use(express.urlencoded({ extended: true })); To Be Delete
-
+// Connect to database
 async function connectToDatabase() {
     try {
         await db.mongoose.connect(process.env.MONGODB_URL);
@@ -53,7 +58,6 @@ async function initializeRoles() {
     }
 }
 
-// Connect to database
 connectToDatabase().then(async () => {
     await initializeRoles();
 });
@@ -68,6 +72,21 @@ require('./app/routes/auth.routes')(app);
 require('./app/routes/user.routes')(app);
 require('./app/routes/userProfile.routes')(app);
 require('./app/routes/diveSession.routes')(app)
+
+// Swagger
+const swaggerOptions = {
+    definition: {
+        openapi: '3.0.0', // OpenAPI version (Swagger)
+        info: {
+            title: 'BlueFreedive - Rest API Documentation',
+            version: '1.0.0',
+            description: 'Rest API Documentation for BlueFreedive Backend Service.',
+        },
+    },
+    apis: ['./app/routes/*.js'], // Routes to document
+};
+const swaggerSpec = swaggerJSDoc(swaggerOptions); // Swagger documentation creation
+app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec)); // SwaggerUI for documentation
 
 // Set port, listen for requests
 const SERVICE_PORT = process.env.SERVICE_PORT || 8080;
