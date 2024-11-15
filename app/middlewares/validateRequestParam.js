@@ -1,6 +1,6 @@
 const mongoose = require('mongoose');
 
-const validateObjectId = (req, res, next) => {
+const validateIdPathParam = (req, res, next) => {
     const { id } = req.params;
 
     if (!mongoose.Types.ObjectId.isValid(id)) {
@@ -10,4 +10,8 @@ const validateObjectId = (req, res, next) => {
     next();
 };
 
-module.exports = validateObjectId;
+const validateRequestParam = {
+    validateIdPathParam
+};
+
+module.exports = validateRequestParam;

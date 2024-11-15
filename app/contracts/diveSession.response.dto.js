@@ -4,7 +4,7 @@ function diveSessionResponseDto(diveSession) {
         user: diveSession.user,
         date: diveSession.date,
         location: diveSession.location,
-        gpsLocation: diveSession.gpsLocation,
+        gpsCoordinates: diveSession.gpsCoordinates,
         waterType: diveSession.waterType,
         temperature: diveSession.temperature,
         diveCount: diveSession.diveCount,

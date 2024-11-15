@@ -1,4 +1,4 @@
-const { authJwt, validateRequestParam } = require("../middlewares");
+const { authJwt, validateRequestParam, validateRequestBody } = require("../middlewares");
 const diveSessionController = require("../controllers/diveSession.controller");
 
 module.exports = function(app) {
@@ -144,7 +144,7 @@ module.exports = function(app) {
      *       500:
      *         description: Server error during dive session creation.
      */
-    app.post("/api/diveSessions/me", [authJwt.verifyAccessToken], diveSessionController.createMyDiveSession);
+    app.post("/api/diveSessions/me", [authJwt.verifyAccessToken, validateRequestBody.validateDiveSessionRequestBody], diveSessionController.createMyDiveSession);
 
     /**
      * @swagger
@@ -326,7 +326,7 @@ module.exports = function(app) {
      *       500:
      *         description: Server error during retrieving dive session.
      */
-    app.get("/api/diveSessions/me/:id", [authJwt.verifyAccessToken, validateRequestParam], diveSessionController.retrieveMyDiveSession);
+    app.get("/api/diveSessions/me/:id", [authJwt.verifyAccessToken, validateRequestParam.validateIdPathParam], diveSessionController.retrieveMyDiveSession);
 
     /**
      * @swagger
@@ -476,7 +476,7 @@ module.exports = function(app) {
      *       500:
      *         description: Server error during updating dive session.
      */
-    app.put("/api/diveSessions/me/:id", [authJwt.verifyAccessToken, validateRequestParam], diveSessionController.updateMyDiveSession);
+    app.put("/api/diveSessions/me/:id", [authJwt.verifyAccessToken, validateRequestParam.validateIdPathParam, validateRequestBody.validateDiveSessionRequestBody], diveSessionController.updateMyDiveSession);
 
     /**
      * @swagger
@@ -510,7 +510,7 @@ module.exports = function(app) {
      *       500:
      *         description: Server error during deleting dive session.
      */
-    app.delete("/api/diveSessions/me/:id", [authJwt.verifyAccessToken, validateRequestParam], diveSessionController.deleteMyDiveSession);
+    app.delete("/api/diveSessions/me/:id", [authJwt.verifyAccessToken, validateRequestParam.validateIdPathParam], diveSessionController.deleteMyDiveSession);
 
     //Admin
 
@@ -694,7 +694,7 @@ module.exports = function(app) {
      *       500:
      *         description: Server error during retrieve dive session.
      */
-    app.get("/api/diveSessions/:id", [authJwt.verifyAccessToken, authJwt.isAdmin, validateRequestParam], diveSessionController.retrieveDiveSession);
+    app.get("/api/diveSessions/:id", [authJwt.verifyAccessToken, authJwt.isAdmin, validateRequestParam.validateIdPathParam], diveSessionController.retrieveDiveSession);
 
     /**
      * @swagger
@@ -728,5 +728,5 @@ module.exports = function(app) {
      *       500:
      *         description: Server error during delete dive session.
      */
-    app.delete("/api/diveSessions/:id", [authJwt.verifyAccessToken, authJwt.isAdmin, validateRequestParam], diveSessionController.deleteDiveSession);
+    app.delete("/api/diveSessions/:id", [authJwt.verifyAccessToken, authJwt.isAdmin, validateRequestParam.validateIdPathParam], diveSessionController.deleteDiveSession);
 }
