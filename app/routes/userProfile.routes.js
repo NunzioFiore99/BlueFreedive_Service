@@ -1,4 +1,4 @@
-const { authJwt } = require("../middlewares");
+const { authJwt, validateRequestBody } = require("../middlewares");
 const userProfileController = require("../controllers/userProfile.controller");
 
 module.exports = function(app) {
@@ -116,5 +116,5 @@ module.exports = function(app) {
      *       500:
      *         description: Server error during update user profile data.
      */
-    app.put("/api/userProfiles/me", [authJwt.verifyAccessToken], userProfileController.updateSelf);
+    app.put("/api/userProfiles/me", [authJwt.verifyAccessToken, validateRequestBody.validateUserProfileRequestBody], userProfileController.updateSelf);
 };

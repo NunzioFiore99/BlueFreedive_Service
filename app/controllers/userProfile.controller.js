@@ -22,12 +22,12 @@ exports.updateSelf = async (req, res) => {
     try {
         const decodedAccessToken = await getDecodedAccessToken(req);
         const updates = {};
-        if (req.body.gender) updates.gender = req.body.gender;
-        if (req.body.birthdate) updates.birthdate = req.body.birthdate;
-        if (req.body.firstName) updates.firstName = req.body.firstName;
-        if (req.body.lastName) updates.lastName = req.body.lastName;
-        if (req.body.weight) updates.weight = req.body.weight;
-        if (req.body.height) updates.height = req.body.height;
+        updates.gender = req.body.gender;
+        updates.birthdate = req.body.birthdate;
+        updates.firstName = req.body.firstName;
+        updates.lastName = req.body.lastName;
+        updates.weight = req.body.weight;
+        updates.height = req.body.height;
         const userId = decodedAccessToken.id;
         const updatedUserProfile = await UserProfile.findOneAndUpdate({user: userId}, updates, { new: true, runValidators: true, useFindAndModify: false });
         if (!updatedUserProfile) return res.status(404).json({ message: "User not found." });

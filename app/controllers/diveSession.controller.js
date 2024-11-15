@@ -8,7 +8,6 @@ const diveSessionsResponseDto = require("../contracts/diveSessions.response.dto"
 exports.createMyDiveSession = async (req, res) => {
     try {
         const diveSession = req.body;
-        if (!diveSession) return res.status(400).json({message: "Body is empty."});
         const decodedAccessToken = await getDecodedAccessToken(req);
         const userId = decodedAccessToken.id;
         const diveSessionToSave = new DiveSession({
@@ -69,7 +68,6 @@ exports.retrieveMyDiveSession = async (req, res) => {
 exports.updateMyDiveSession = async (req, res) => {
     try {
         const diveSession = req.body;
-        if (!diveSession || !req.params.id) return res.status(400).json({message: "Body or id is empty."});
         const decodedAccessToken = await getDecodedAccessToken(req);
         const userId = decodedAccessToken.id;
         const diveSessionToUpdate = {

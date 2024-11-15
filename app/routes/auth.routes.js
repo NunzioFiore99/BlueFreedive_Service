@@ -1,4 +1,4 @@
-const { verifySignUp, verifyLogin} = require("../middlewares");
+const { verifySignUp, verifyLogin, validateRequestBody} = require("../middlewares");
 const authController = require("../controllers/auth.controller");
 
 module.exports = function(app) {
@@ -49,7 +49,8 @@ module.exports = function(app) {
         [
             verifySignUp.checkIfPresentAllSignUpDate,
             verifySignUp.checkDuplicateUsernameOrEmail,
-            verifySignUp.checkRolesExisted
+            verifySignUp.checkRolesExisted,
+            validateRequestBody.validateAuthSignUpRequestBody
         ],
         authController.signup
     );
@@ -94,7 +95,7 @@ module.exports = function(app) {
      *       500:
      *         description: Server error during user access.
      */
-    app.post("/api/auth/login", [verifyLogin.checkIfPresentAllLoginDate], authController.login);
+    app.post("/api/auth/login", [verifyLogin.checkIfPresentAllLoginDate, validateRequestBody.validateAuthLoginRequestBody], authController.login);
 
     /**
      * @swagger

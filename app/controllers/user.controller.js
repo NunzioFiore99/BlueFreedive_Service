@@ -33,8 +33,8 @@ exports.updateSelf = async (req, res) => {
     try {
         const decodedAccessToken = await getDecodedAccessToken(req);
         const updates = {};
-        if (req.body.email) updates.email = req.body.email;
-        if (req.body.password) updates.password = bcrypt.hashSync(req.body.password, 8);
+        updates.email = req.body.email;
+        updates.password = bcrypt.hashSync(req.body.password, 8);
         const userId = decodedAccessToken.id;
         const updatedUser = await User.findOneAndUpdate({ _id: userId }, updates, { new: true, runValidators: true });
         if (!updatedUser) return res.status(404).json({ message: "User not found." });
@@ -50,9 +50,6 @@ exports.updateSelf = async (req, res) => {
 exports.createUsers = async (req, res) => {
     try {
         const users = req.body;
-        if (!Array.isArray(users) || users.length === 0) {
-            return res.status(400).send({ message: "No users provided!" });
-        }
         const savedUsers = [];
         for (let userData of users) {
             const user = new User({
@@ -102,10 +99,10 @@ exports.retrieveUser = async (req, res) => {
 exports.updateUser = async (req, res) => {
     try {
         const updates = {};
-        if (req.body.username) updates.username = req.body.username;
-        if (req.body.email) updates.email = req.body.email;
-        if (req.body.password) updates.password = bcrypt.hashSync(req.body.password, 8);
-        if (req.body.roles) updates.roles = await getRoles(req.body.roles);
+        updates.username = req.body.username;
+        updates.email = req.body.email;
+        updates.password = bcrypt.hashSync(req.body.password, 8);
+        updates.roles = await getRoles(req.body.roles);
 
         const updatedUser = await User.findOneAndUpdate({ _id: req.params.id }, updates, { new: true, runValidators: true }).populate("roles", "-__v").exec();
         if (!updatedUser) return res.status(404).json({ message: "User not found." });

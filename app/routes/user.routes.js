@@ -1,4 +1,4 @@
-const { authJwt, validateRequestParam } = require("../middlewares");
+const { authJwt, validateRequestParam, validateRequestBody } = require("../middlewares");
 const userController = require("../controllers/user.controller");
 
 module.exports = function(app) {
@@ -39,7 +39,7 @@ module.exports = function(app) {
      *       500:
      *         description: Server error during retrieve user data.
      */
-    app.get("/api/users/me", [authJwt.verifyAccessToken], userController.retrieveSelf)
+    app.get("/api/users/me", [authJwt.verifyAccessToken], userController.retrieveSelf);
 
     /**
      * @swagger
@@ -80,7 +80,7 @@ module.exports = function(app) {
      *       500:
      *         description: Server error during update partial user data.
      */
-    app.patch("/api/users/me", [authJwt.verifyAccessToken], userController.updateSelf)
+    app.patch("/api/users/me", [authJwt.verifyAccessToken, validateRequestBody.validateUserRequestBodyPatch], userController.updateSelf);
 
     // Admin
 
@@ -165,7 +165,7 @@ module.exports = function(app) {
      *       500:
      *         description: Server error during create users.
      */
-    app.post("/api/users", [authJwt.verifyAccessToken, authJwt.isAdmin], userController.createUsers);
+    app.post("/api/users", [authJwt.verifyAccessToken, authJwt.isAdmin, validateRequestBody.validateUsersRequestBodyPost], userController.createUsers);
 
     /**
      * @swagger
@@ -218,7 +218,7 @@ module.exports = function(app) {
      *       500:
      *         description: Server error during retrieve users.
      */
-    app.get("/api/users", [authJwt.verifyAccessToken, authJwt.isAdmin], userController.retrieveUsers)
+    app.get("/api/users", [authJwt.verifyAccessToken, authJwt.isAdmin], userController.retrieveUsers);
 
     /**
      * @swagger
@@ -275,7 +275,7 @@ module.exports = function(app) {
      *       500:
      *         description: Server error during retrieve user.
      */
-    app.get("/api/users/:id", [authJwt.verifyAccessToken, authJwt.isAdmin, validateRequestParam], userController.retrieveUser)
+    app.get("/api/users/:id", [authJwt.verifyAccessToken, authJwt.isAdmin, validateRequestParam.validateIdPathParam], userController.retrieveUser);
 
     /**
      * @swagger
@@ -362,7 +362,7 @@ module.exports = function(app) {
      *       500:
      *         description: Server error during update user.
      */
-    app.put("/api/users/:id", [authJwt.verifyAccessToken, authJwt.isAdmin, validateRequestParam], userController.updateUser);
+    app.put("/api/users/:id", [authJwt.verifyAccessToken, authJwt.isAdmin, validateRequestParam.validateIdPathParam, validateRequestBody.validateUserRequestBodyPut], userController.updateUser);
 
     /**
      * @swagger
@@ -394,5 +394,5 @@ module.exports = function(app) {
      *       500:
      *         description: Server error during delete user.
      */
-    app.delete("/api/users/:id", [authJwt.verifyAccessToken, authJwt.isAdmin, validateRequestParam], userController.deleteUser);
+    app.delete("/api/users/:id", [authJwt.verifyAccessToken, authJwt.isAdmin, validateRequestParam.validateIdPathParam], userController.deleteUser);
 };
