@@ -7,6 +7,8 @@ module.exports = function(app) {
      * /api/auth/signup:
      *   post:
      *     summary: User registration
+     *     tags:
+     *       - Auth
      *     description: Allows you to register a user on the system.
      *     requestBody:
      *       required: true
@@ -57,6 +59,8 @@ module.exports = function(app) {
      * /api/auth/login:
      *   post:
      *     summary: User access
+     *     tags:
+     *       - Auth
      *     description: Allows you to access a user on the system.
      *     requestBody:
      *       required: true
@@ -97,6 +101,8 @@ module.exports = function(app) {
      * /api/auth/accessToken:
      *   get:
      *     summary: New Access Token
+     *     tags:
+     *       - Auth
      *     description: Retrieve new Access Token if it is expired.
      *     parameters:
      *       - in: cookie
@@ -128,6 +134,8 @@ module.exports = function(app) {
      * /api/auth/logout:
      *   get:
      *     summary: User logout
+     *     tags:
+     *       - Auth
      *     description: Remove refresh token from cookies.
      *     responses:
      *       200:

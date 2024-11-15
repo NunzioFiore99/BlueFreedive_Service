@@ -9,6 +9,8 @@ module.exports = function(app) {
      * /api/diveSessions/me:
      *   post:
      *     summary: Create a new dive session for the authenticated user
+     *     tags:
+     *       - Dive Session
      *     description: Creates a new dive session for the currently authenticated user.
      *     parameters:
      *       - in: header
@@ -149,6 +151,8 @@ module.exports = function(app) {
      * /api/diveSessions/me:
      *   get:
      *     summary: Retrieve all dive sessions for the authenticated user
+     *     tags:
+     *       - Dive Session
      *     description: Retrieves a list of all dive sessions for the currently authenticated user.
      *     parameters:
      *       - in: header
@@ -234,6 +238,8 @@ module.exports = function(app) {
      * /api/diveSessions/me/{id}:
      *   get:
      *     summary: Retrieve a specific dive session by ID
+     *     tags:
+     *       - Dive Session
      *     description: Retrieves a specific dive session for the currently authenticated user by its ID.
      *     parameters:
      *       - in: header
@@ -327,6 +333,8 @@ module.exports = function(app) {
      * /api/diveSessions/me/{id}:
      *   put:
      *     summary: Update a specific dive session by ID
+     *     tags:
+     *       - Dive Session
      *     description: Updates a specific dive session for the currently authenticated user.
      *     parameters:
      *       - in: header
@@ -475,6 +483,8 @@ module.exports = function(app) {
      * /api/diveSessions/me/{id}:
      *   delete:
      *     summary: Delete a specific dive session by ID
+     *     tags:
+     *       - Dive Session
      *     description: Deletes a specific dive session for the currently authenticated user by its ID.
      *     parameters:
      *       - in: header
@@ -509,6 +519,8 @@ module.exports = function(app) {
      * /api/diveSessions:
      *   get:
      *     summary: Retrieve all dive sessions
+     *     tags:
+     *       - Dive Session
      *     description: Retrieves all dive sessions for the authenticated user with ADMIN role.
      *     parameters:
      *       - in: header
@@ -594,6 +606,8 @@ module.exports = function(app) {
      * /api/diveSessions/{id}:
      *   get:
      *     summary: Retrieve a specific dive session by ID
+     *     tags:
+     *       - Dive Session
      *     description: Retrieves the details of a specific dive session by ID for the authenticated user with ADMIN role.
      *     parameters:
      *       - in: header
@@ -687,6 +701,8 @@ module.exports = function(app) {
      * /api/diveSessions/{id}:
      *   delete:
      *     summary: Delete a specific dive session by ID
+     *     tags:
+     *       - Dive Session
      *     description: Deletes a specific dive session by ID for the authenticated user with ADMIN role.
      *     parameters:
      *       - in: header

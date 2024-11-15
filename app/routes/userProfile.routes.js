@@ -7,6 +7,8 @@ module.exports = function(app) {
      * /api/userProfiles/me:
      *   get:
      *     summary: Retrieve user profile
+     *     tags:
+     *       - User Profile
      *     description: Retrieve user profile data by user in jwt token.
      *     parameters:
      *       - in: header
@@ -45,6 +47,8 @@ module.exports = function(app) {
      * /api/userProfiles/me:
      *   put:
      *     summary: Update user profile
+     *     tags:
+     *       - User Profile
      *     description: Update user profile data by user in jwt token.
      *     parameters:
      *       - in: header

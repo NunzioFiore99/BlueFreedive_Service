@@ -9,6 +9,8 @@ module.exports = function(app) {
      * /api/users/me:
      *   get:
      *     summary: Retrieve user
+     *     tags:
+     *       - User
      *     description: Retrieve user data by user in jwt token.
      *     parameters:
      *       - in: header
@@ -44,6 +46,8 @@ module.exports = function(app) {
      * /api/users/me:
      *   patch:
      *     summary: Update partial user
+     *     tags:
+     *       - User
      *     description: Update partial user data (email - password) by user in jwt token.
      *     parameters:
      *       - in: header
@@ -85,6 +89,8 @@ module.exports = function(app) {
      * /api/users:
      *   post:
      *     summary: Create new users
+     *     tags:
+     *       - User
      *     description: Create new users.
      *     parameters:
      *       - in: header
@@ -166,6 +172,8 @@ module.exports = function(app) {
      * /api/users:
      *   get:
      *     summary: Retrieve users
+     *     tags:
+     *       - User
      *     description: Retrieve all user data.
      *     parameters:
      *       - in: header
@@ -217,6 +225,8 @@ module.exports = function(app) {
      * /api/users/{id}:
      *   get:
      *     summary: Retrieve user by id
+     *     tags:
+     *       - User
      *     description: Retrieve user data by id.
      *     parameters:
      *       - in: header
@@ -272,6 +282,8 @@ module.exports = function(app) {
      * /api/users/{id}:
      *   put:
      *     summary: Update user by id
+     *     tags:
+     *       - User
      *     description: Update user data by id.
      *     parameters:
      *       - in: header
@@ -357,6 +369,8 @@ module.exports = function(app) {
      * /api/users/{id}:
      *   delete:
      *     summary: Delete user by id
+     *     tags:
+     *       - User
      *     description: Delete user by id.
      *     parameters:
      *       - in: header
