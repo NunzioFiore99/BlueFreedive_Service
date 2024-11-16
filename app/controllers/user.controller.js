@@ -98,10 +98,15 @@ exports.retrieveUser = async (req, res) => {
 
 exports.updateUser = async (req, res) => {
     try {
+        const user = await User.findById(req.params.id);
+        if (!user) {
+            return res.status(404).json({ message: "User not found." });
+        }
+
         const updates = {};
         updates.username = req.body.username;
         updates.email = req.body.email;
-        updates.password = bcrypt.hashSync(req.body.password, 8);
+        if(req.body.password !== user.password) updates.password = bcrypt.hashSync(req.body.password, 8);
         updates.roles = await getRoles(req.body.roles);
 
         const updatedUser = await User.findOneAndUpdate({ _id: req.params.id }, updates, { new: true, runValidators: true }).populate("roles", "-__v").exec();

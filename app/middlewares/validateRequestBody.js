@@ -1,5 +1,9 @@
 const Joi = require('joi');
 
+const isHashed = (password) => {
+    return password && password.startsWith('$2a$');
+};
+
 // Schema
 const userRequestBodyValidationPatch = Joi.object({
     email: Joi.string()
@@ -94,15 +98,21 @@ const userRequestBodyValidationPut = Joi.object({
         }),
 
     password: Joi.string()
-        .min(8)
-        .pattern(/^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/)
+        .custom((value, helpers) => {
+            if (isHashed(value)) {
+                return value;
+            }
+            const passwordPattern = /^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
+            if (!passwordPattern.test(value)) {
+                return helpers.message('La password deve contenere almeno 8 caratteri, una lettera, un numero e un carattere speciale.');
+            }
+            return value;
+        })
         .required()
         .messages({
             'string.base': 'La password deve essere una stringa.',
             'string.empty': 'La password non può essere vuota.',
-            'string.min': 'La password deve contenere almeno 8 caratteri.',
-            'string.pattern.base': 'La password deve contenere almeno una lettera, un numero e un carattere speciale.',
-            'any.required': 'La password è un campo obbligatorio.'
+            'any.required': 'La password è un campo obbligatorio.',
         }),
 
     roles: Joi.array()
