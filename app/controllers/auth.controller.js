@@ -110,3 +110,17 @@ exports.newAccessToken = async (req, res) => {
         return res.status(500).send({ message: err.message });
     }
 };
+
+// Logout, clean cookie and delete refresh_token from database
+exports.logout = async (req, res) => {
+    try {
+        const refreshTokenCookie = req.cookies.refreshToken;
+        if (refreshTokenCookie) {
+            await RefreshToken.findOneAndDelete({ token: refreshTokenCookie })
+        }
+        res.clearCookie('refreshToken');
+        return res.status(204).send();
+    } catch (err) {
+        return res.status(500).send({ message: err.message });
+    }
+};

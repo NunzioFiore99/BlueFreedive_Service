@@ -137,13 +137,12 @@ module.exports = function(app) {
      *     summary: User logout
      *     tags:
      *       - Auth
-     *     description: Remove refresh token from cookies.
+     *     description: Remove refresh token from cookies and database.
      *     responses:
-     *       200:
+     *       204:
      *         description: Refresh token deleted.
+     *       500:
+     *         description: Error during logout.
      */
-    app.get("/api/auth/logout", (req, res) => {
-        res.clearCookie ( "refreshToken" );
-        res.json ({ message : "Disconnected" });
-    })
+    app.get("/api/auth/logout", authController.logout);
 };
