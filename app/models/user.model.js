@@ -8,13 +8,13 @@ const userSchema = new mongoose.Schema({
         unique: true,
         minlength: 3,
         maxlength: 20,
-        match: /^[a-zA-Z0-9_]+$/ // Solo lettere, numeri e underscore
+        match: /^[a-zA-Z0-9_]+$/
     },
     email: {
         type: String,
         required: true,
         unique: true,
-        match: /.+@.+\..+/ // RegEx di base per verificare che abbia un formato email
+        match: /.+@.+\..+/
     },
     password: {
         type: String,

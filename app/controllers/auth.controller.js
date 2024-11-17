@@ -39,7 +39,7 @@ exports.signup = async (req, res) => {
         await user.save();
         const newUser = await User.findOne({ _id: user._id }).populate("roles");
 
-        res.status(201).send({ message: "You have registered successfully!", user: userResponseDto(newUser) });
+        res.status(201).send(userResponseDto(newUser));
     } catch (err) {
         res.status(500).send({ message: err.message });
     }

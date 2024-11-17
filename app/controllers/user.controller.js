@@ -32,10 +32,10 @@ exports.retrieveSelf = async (req, res) => {
 exports.updateSelf = async (req, res) => {
     try {
         const decodedAccessToken = await getDecodedAccessToken(req);
+        const userId = decodedAccessToken.id;
         const updates = {};
         updates.email = req.body.email;
         updates.password = bcrypt.hashSync(req.body.password, 8);
-        const userId = decodedAccessToken.id;
         const updatedUser = await User.findOneAndUpdate({ _id: userId }, updates, { new: true, runValidators: true });
         if (!updatedUser) return res.status(404).json({ message: "User not found." });
         res.status(204).send();
@@ -58,6 +58,22 @@ exports.createUsers = async (req, res) => {
                 password: bcrypt.hashSync("Password", 8) //Hashed Password
             });
             user.roles = await getRoles(userData.roles);
+
+            // Check if username already exist
+            if (userData.username) {
+                const existingUsername = await User.findOne({ username: userData.username });
+                if (existingUsername) {
+                    return res.status(400).json({ message: "Username already exists." });
+                }
+            }
+
+            // Check if email already exist
+            if (userData.email) {
+                const existingEmail = await User.findOne({ email: userData.email });
+                if (existingEmail) {
+                    return res.status(400).json({ message: "Email already exists." });
+                }
+            }
 
             await user.save();
             const newUser = await User.findOne({ _id: user._id }).populate("roles");
@@ -101,6 +117,22 @@ exports.updateUser = async (req, res) => {
         const user = await User.findById(req.params.id);
         if (!user) {
             return res.status(404).json({ message: "User not found." });
+        }
+
+        // Check if username already exist
+        if (req.body.username && req.body.username !== user.username) {
+            const existingUsername = await User.findOne({ username: req.body.username });
+            if (existingUsername) {
+                return res.status(400).json({ message: "Username already exists." });
+            }
+        }
+
+        // Check if email already exist
+        if (req.body.email && req.body.email !== user.email) {
+            const existingEmail = await User.findOne({ email: req.body.email });
+            if (existingEmail) {
+                return res.status(400).json({ message: "Email already exists." });
+            }
         }
 
         const updates = {};
