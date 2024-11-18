@@ -82,6 +82,7 @@ exports.login = async (req, res) => {
 // Get new access_token and check refresh_token
 exports.newAccessToken = async (req, res) => {
     const refreshTokenCookie = req.cookies.refreshToken;
+    console.log(refreshTokenCookie);
     if (!refreshTokenCookie) {
         return res.status(401).json({ message: "Refresh Token is required. Please make a new login request." });
     }
