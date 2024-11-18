@@ -67,7 +67,7 @@ exports.login = async (req, res) => {
         res.cookie('refreshToken', refreshToken, {
             httpOnly: true, // Not accessible via javascript (XSS attacks) but only by server
             secure: true, // I use HTTPS on dev
-            sameSite: 'None', // Prevents sending the cookie in cross-site contexts (CSRF Token), send cookie only to specific origin (webapp)
+            sameSite: 'None', // Necessary None because backend and frontend have different domain (cross-origin)
             maxAge: process.env.JWT_REFRESH_EXPIRATION * 1000 // Expiry time equal to the validity of the refresh token
         });
 
@@ -82,7 +82,6 @@ exports.login = async (req, res) => {
 // Get new access_token and check refresh_token
 exports.newAccessToken = async (req, res) => {
     const refreshTokenCookie = req.cookies.refreshToken;
-    console.log(refreshTokenCookie);
     if (!refreshTokenCookie) {
         return res.status(401).json({ message: "Refresh Token is required. Please make a new login request." });
     }
