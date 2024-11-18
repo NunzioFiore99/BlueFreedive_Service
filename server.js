@@ -12,7 +12,6 @@ require("dotenv").config();
 // Middlewares
 app.use(cookieParser());
 app.use(express.json());
-//app.use(express.urlencoded({ extended: true })); To Be Delete
 
 // CORS settings
 const corsOptions = {
