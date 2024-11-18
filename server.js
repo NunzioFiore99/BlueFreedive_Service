@@ -37,7 +37,6 @@ app.use(function(req, res, next) {
 // Connect to database
 async function connectToDatabase() {
     try {
-        console.log("db url: ", process.env.MONGODB_URL);
         await db.mongoose.connect(process.env.MONGODB_URL);
         console.log("Successfully connected to MongoDB.");
     } catch (err) {
