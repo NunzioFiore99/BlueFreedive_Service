@@ -16,7 +16,7 @@ app.use(express.json());
 // CORS settings
 const corsOptions = {
     origin: process.env.WEBAPP_URL || "http://localhost:8081", // Authorized client
-    credentials: false // Not necessary if all cookies are sameSite: Strict (not cross-origin)
+    credentials: true // Not necessary if all cookies are sameSite: Strict (not cross-origin)
 };
 app.use(cors(corsOptions));
 
