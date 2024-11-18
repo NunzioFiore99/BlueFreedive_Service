@@ -12,12 +12,11 @@ require("dotenv").config();
 // Middlewares
 app.use(cookieParser());
 app.use(express.json());
-//app.use(express.urlencoded({ extended: true })); To Be Delete
 
 // CORS settings
 const corsOptions = {
-    origin: process.env.WEBAPP_URL || "http://localhost:8081", // Client autorizzato
-    credentials: true //Permette di inviare cookie
+    origin: process.env.WEBAPP_URL || "http://localhost:8081", // Authorized client
+    credentials: false // Not necessary if all cookies are sameSite: Strict (not cross-origin)
 };
 app.use(cors(corsOptions));
 

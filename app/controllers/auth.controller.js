@@ -65,9 +65,9 @@ exports.login = async (req, res) => {
         const refreshToken = await RefreshToken.createToken(user);
 
         res.cookie('refreshToken', refreshToken, {
-            httpOnly: true, // Not accessible via javascript (XSS attacks)
-            secure: false, // I don't use HTTPS but I use HTTP
-            sameSite: 'Strict', // Prevents sending the cookie in cross-site contexts (CSRF Token)
+            httpOnly: true, // Not accessible via javascript (XSS attacks) but only by server
+            secure: true, // I use HTTPS on dev
+            sameSite: 'Strict', // Prevents sending the cookie in cross-site contexts (CSRF Token), send cookie only to specific origin (webapp)
             maxAge: process.env.JWT_REFRESH_EXPIRATION * 1000 // Expiry time equal to the validity of the refresh token
         });
 
