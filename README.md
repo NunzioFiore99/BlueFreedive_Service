@@ -11,3 +11,14 @@ Come avviare applicativo backend in locale:
 
 Il server utilizza il database No-SQL MongoDB creato su MongoDB Atlas e perciò raggiungibile tramite web.
 Il server utilizza valori inseriti nel file ".env".
+
+DOCKER
+
+Il server è possibile anche avviarlo utilizzando Docker ed avviando un container.
+Per sfruttare Docker bisogna seguire i seguenti passaggi:
+
+1) Aprire terminale
+2) Verificare di essere nella cartella "BlueFreedive_Service"
+3) Eseguire il comando per la build dell'immagine Docker "docker build -t blue-freedive-service ."
+4) Eseguire il comanda per avviare il container con l'immagine Docker appena creata "docker run -p 8080:8080 blue-freedive-service"
+5) Il server è raggiungibile all'indirizzo "http://localhost:8080"
